@@ -32,7 +32,7 @@ const Profile = ({ showModal, setShowModal }) => {
                 uri: image.path,
                 type: image.mime,
                 name: name,
-                filename: "images"
+                filename: "images"//
             });
             data.append("email", user?.email)
             data.append("picture", name)

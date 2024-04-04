@@ -80,7 +80,8 @@ const Register = () => {
         }
     }
 
-    return <KeyboardAvoidingView style={{ flex: 1, marginTop: 50 }}>
+    return <KeyboardAvoidingView style={{ flex: 1, marginTop: 10 }}>
+        <View style={{width:"100%" , height:"100%" , alignItems:"center" , flexDirection:"row"}}>
         <ScrollView
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
@@ -143,6 +144,7 @@ const Register = () => {
                 />
             </Center>
         </ScrollView>
+        </View>
     </KeyboardAvoidingView>
 
 };

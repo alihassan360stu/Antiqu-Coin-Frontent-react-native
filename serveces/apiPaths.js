@@ -1,6 +1,6 @@
 const apiPaths = {
     register: () => 'auth/register',
-    login: () => 'auth/login',
+    login: () => '/auth/login',
     otpGenerate: () => 'auth/generate-otp',
     otpVerify: () => '/auth/verify-otp',
     isUserExist: () => '/auth/is-user-exist',

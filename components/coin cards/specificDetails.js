@@ -16,7 +16,7 @@ const CardDetails = ({ showModal, setShowModal, item }) => {
                         {item.year} of {item.country}
                     </Text>
                     <Text style={{ fontSize: 13, fontWeight: 700, color: "green" , marginRight:35 }}>
-                        {item.Price}$
+                        {item.price}$
                     </Text>
                 </Modal.Header>
                 <Modal.Body style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>

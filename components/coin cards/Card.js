@@ -14,7 +14,7 @@ const Card = ({ item }) => {
         setSelectedItems(item)
         setShowModal(true)
     }
-    const { year, country, price, description, delivery } = item;
+    const { year, country, price, description, delivery, is_availabe } = item;
     return (
         <LinearGradient
             style={style.container}
@@ -35,15 +35,17 @@ const Card = ({ item }) => {
                 <TouchableOpacity
                     onPress={() => { openSpecificDetaild(item) }}
                     style={style.contant_child_1}>
-                    <Image style={style.image} source={{ uri: `${baseUrl.api}/static/coins/${item.filename}.png` }} />
+                    <Image style={style.image} source={{ uri: `${baseUrl.api}/static/coins/${item.filename}` }} />
                 </TouchableOpacity>
                 <View style={style.contant_child_2}>
                     <View style={style.diliveryWrapper}>
                         <Text style={{ fontSize: 10, fontWeight: 600, color: "black" }}>dilivery in {delivery} days</Text>
                     </View>
-                    <View style={style.sold_or_available}>
+                    {is_availabe===1 ? <View style={style.is_availabe}>
+                        <Text style={{ fontSize: 12, fontWeight: 600, color: "black" }}>Available</Text>
+                    </View> : <View style={style.sold_or_available}>
                         <Text style={{ fontSize: 12, fontWeight: 600, color: "black" }}>SOLD</Text>
-                    </View>
+                    </View>}
                     <View style={style.textWrapper}>
                         <Text style={{ fontSize: 12, fontWeight: 600, color: "black" }}>Quantity 1</Text>
                     </View>
@@ -137,7 +139,15 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 30,
-        width: "35%",
+        marginTop: 3
+    },
+    is_availabe: {
+        backgroundColor: "green",
+        display: 'flex',
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 30,
         marginTop: 3
     },
     textWrapper: {

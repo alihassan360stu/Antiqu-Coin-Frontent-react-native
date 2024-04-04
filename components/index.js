@@ -33,7 +33,7 @@ const Index = () => {
 
 
     return <View style={{ position: "relative", height: "100%", display: "flex" }}>
-        <LinearGradientWrapper style={{ minHeight: "93%", flex: 1, height: "93%" }} >
+        <LinearGradientWrapper colors={['#FFB534', '#FFB534', '#FFB534']} style={{ minHeight: "93%", flex: 1, height: "93%" }} >
             <Header />
             {
                 index === 1 && <FlatList
@@ -53,7 +53,9 @@ const Index = () => {
             }
         </LinearGradientWrapper>
         <View style={{ alignSelf: "flex-end", height: "7%" }}>
-            <TabsFooter onChnageTab={onChnageTab} index={index} />
+            {
+                index > 0 && index <= 6 && <TabsFooter onChnageTab={onChnageTab} index={index} />
+            }
         </View>
     </View>
 }

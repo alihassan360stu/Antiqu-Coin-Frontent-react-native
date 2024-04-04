@@ -15,7 +15,7 @@ const optionHeader = (title, nav) => {
     return <LinearGradient
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={{ height: 50, display: "flex", flexDirection: "row", alignItems: "center", paddingLeft: 10 }}
-        colors={['#aed1ef', '#f2dfc1', '#fc94b3']} // Customize with your gradient colors
+        colors={['#FFB534', '#FFB534', '#FFB534']} // Customize with your gradient colors
     >
         {title !== "Login" && <TouchableHighlight
             activeOpacity={0.9}

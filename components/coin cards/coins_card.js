@@ -19,7 +19,7 @@ let copper_array =[
         quantity:4,
         delivery:6,
         is_availabe:1,
-        filename:"copper1",
+        filename:"copper1.jpg",
     },
     {
         year:"400 years old",
@@ -31,7 +31,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper2",
+        filename:"copper2.jpg",
     },
     {
         year:"400 years old",
@@ -43,7 +43,7 @@ let copper_array =[
         quantity:2,
         delivery:6,
         is_availabe:1,
-        filename:"copper3",
+        filename:"copper3.jpg",
     },
     {
         year:"350 years old",
@@ -55,7 +55,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper4",
+        filename:"copper4.jpg",
     },
     {
         year:"600 years old",
@@ -67,7 +67,7 @@ let copper_array =[
         quantity:20,
         delivery:6,
         is_availabe:1,
-        filename:"copper5",
+        filename:"copper5.jpg",
     },
     {
         year:"200 years old",
@@ -79,7 +79,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper6",
+        filename:"copper6.jpg",
     },
     {
         year:"250 years old",
@@ -91,7 +91,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper7",
+        filename:"copper7.jpg",
     },
     {
         year:"70 years old",
@@ -103,7 +103,7 @@ let copper_array =[
         quantity:250,
         delivery:6,
         is_availabe:1,
-        filename:"copper8",
+        filename:"copper8.jpg",
     },
     {
         year:"100 years old",
@@ -115,7 +115,7 @@ let copper_array =[
         quantity:10,
         delivery:6,
         is_availabe:1,
-        filename:"copper9",
+        filename:"copper9.jpg",
     },
     {
         year:"150 years old",
@@ -127,7 +127,7 @@ let copper_array =[
         quantity:20,
         delivery:6,
         is_availabe:1,
-        filename:"copper10",
+        filename:"copper10.jpg",
     },
     {
         year:"200 years old",
@@ -139,7 +139,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper11",
+        filename:"copper11.jpg",
     },
     {
         year:"250 years old",
@@ -151,7 +151,7 @@ let copper_array =[
         quantity:2,
         delivery:6,
         is_availabe:1,
-        filename:"copper12",
+        filename:"copper12.png",
     },
     {
         year:"105 years old",
@@ -163,7 +163,7 @@ let copper_array =[
         quantity:10,
         delivery:6,
         is_availabe:1,
-        filename:"copper13",
+        filename:"copper13.png",
     },
     {
         year:"300 years old",
@@ -175,7 +175,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper14",
+        filename:"copper14.png",
     },
     {
         year:"100 years old",
@@ -187,7 +187,7 @@ let copper_array =[
         quantity:3,
         delivery:6,
         is_availabe:1,
-        filename:"copper15",
+        filename:"copper15.jpg",
     },
     {
         year:"150 years old",
@@ -199,7 +199,7 @@ let copper_array =[
         quantity:5,
         delivery:6,
         is_availabe:1,
-        filename:"copper16",
+        filename:"copper16.jpg",
     },
     {
         year:"120 years old",
@@ -211,7 +211,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper17",
+        filename:"copper17.png",
     },
     {
         year:"75 years old",
@@ -223,7 +223,7 @@ let copper_array =[
         quantity:50,
         delivery:6,
         is_availabe:1,
-        filename:"copper18",
+        filename:"copper18.png",
     },
     {
         year:"100 years old",
@@ -235,7 +235,7 @@ let copper_array =[
         quantity:5,
         delivery:6,
         is_availabe:1,
-        filename:"copper19",
+        filename:"copper19.png",
     },
     {
         year:"150 years old",
@@ -247,7 +247,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper20",
+        filename:"copper20.png",
     },
     {
         year:"100 years old",
@@ -259,7 +259,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper21",
+        filename:"copper21.png",
     },
     {
         year:"55 years old",
@@ -271,7 +271,7 @@ let copper_array =[
         quantity:10,
         delivery:6,
         is_availabe:1,
-        filename:"copper22",
+        filename:"copper22.png",
     },
     {
         year:"125 years old",
@@ -283,7 +283,7 @@ let copper_array =[
         quantity:10,
         delivery:6,
         is_availabe:1,
-        filename:"copper23",
+        filename:"copper23.png",
     },
     {
         year:"60 years old",
@@ -295,7 +295,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper24",
+        filename:"copper24.png",
     },
     {
         year:"250 years old",
@@ -307,7 +307,7 @@ let copper_array =[
         quantity:25,
         delivery:6,
         is_availabe:1,
-        filename:"copper25",
+        filename:"copper25.png",
     },
     {
         year:"500 years old",
@@ -319,7 +319,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper26",
+        filename:"copper26.png",
     },
     {
         year:"250 years old",
@@ -331,7 +331,7 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper27",
+        filename:"copper27.png",
     },
     {
         year:"200 years old",
@@ -343,7 +343,7 @@ let copper_array =[
         quantity:5,
         delivery:6,
         is_availabe:1,
-        filename:"copper28",
+        filename:"copper28.png",
     },
     {
         year:"108 years old",
@@ -355,7 +355,7 @@ let copper_array =[
         quantity:10,
         delivery:6,
         is_availabe:1,
-        filename:"copper29",
+        filename:"copper29.png",
     },
     {
         year:"700 years old",
@@ -367,14 +367,137 @@ let copper_array =[
         quantity:0,
         delivery:6,
         is_availabe:0,
-        filename:"copper30",
+        filename:"copper30.jpg",
     },
 ]
+
+let style_array=[
+    {
+        year:"150 years old",
+        price:850,
+        country:"american",
+        category:"style",
+        description:"this is style united state embosed antique coin using this is by american people for the local trade",
+        discount:0,
+        quantity:5,
+        delivery:6,
+        is_availabe:1,
+        filename:"style1.jpeg",
+    },
+    {
+        year:"85 years old",
+        price:250,
+        country:"Indian",
+        category:"style",
+        description:"this is style indian embosed antique coin using this is by indian people for the gift in temple",
+        discount:0,
+        quantity:0,
+        delivery:6,
+        is_availabe:0,
+        filename:"style2.jpeg",
+    },
+    {
+        year:"87 years old",
+        price:720,
+        country:"american",
+        category:"style",
+        description:"this is style united state embosed antique coin using this is used by american pirate",
+        discount:0,
+        quantity:10,
+        delivery:6,
+        is_availabe:1,
+        filename:"style3.jpeg",
+    },
+    {
+        year:"1 years old",
+        price:850,
+        country:"australia",
+        category:"style",
+        description:"this is style australian embosed antique coin using this is create just for antique coin purpose",
+        discount:0,
+        quantity:30,
+        delivery:6,
+        is_availabe:1,
+        filename:"style4.jpeg",
+    },
+    {
+        year:"100 years old",
+        price:250,
+        country:"france",
+        category:"style",
+        description:"this is style france embosed antique coin using this is used by people for the local trade",
+        discount:0,
+        quantity:50,
+        delivery:6,
+        is_availabe:1,
+        filename:"style5.jpeg",
+    },
+    {
+        year:"200 years old",
+        price:250,
+        country:"portugal",
+        category:"style",
+        description:"this is style portugal embosed antique coin using this by pirate",
+        discount:0,
+        quantity:0,
+        delivery:6,
+        is_availabe:0,
+        filename:"style6.jpeg",
+    },
+    {
+        year:"2500 years old",
+        price:200,
+        country:"portugal",
+        category:"style",
+        description:"this is style portugal embosed antique coin using this iby the pirate of sea",
+        discount:0,
+        quantity:5,
+        delivery:6,
+        is_availabe:1,
+        filename:"style7.jpeg",
+    },
+    {
+        year:"120 years old",
+        price:260,
+        country:"american",
+        category:"style",
+        description:"this is style united state embosed antique coin using this is by american people for the antique selling",
+        discount:0,
+        quantity:50,
+        delivery:6,
+        is_availabe:1,
+        filename:"style8.jpeg",
+    },
+    {
+        year:"260 years old",
+        price:700,
+        country:"american",
+        category:"style",
+        description:"this is style united state embosed antique coin using this is by american people this is five cent coin now using just for antique",
+        discount:0,
+        quantity:50,
+        delivery:6,
+        is_availabe:1,
+        filename:"style9.jpeg",
+    },
+    {
+        year:"300 years old",
+        price:560,
+        country:"american",
+        category:"style",
+        description:"this is style united state embosed antique coin using this is by american sea pirate just like as a antique coin this used for dig in jungle",
+        discount:0,
+        quantity:0,
+        delivery:6,
+        is_availabe:10,
+        filename:"style10.jpeg",
+    },
+    ]
 
 const Coins_card = () => {
     return (
             <FlatList
-                data={copper_array}
+                data={copper_array.concat(style_array)}
                 // ref={ref}
                 // onViewableItemsChanged={onViewableItemsChanged}
                 // ListHeaderComponent={() => <View><Text>loading no data available</Text></View>}

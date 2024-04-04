@@ -34,8 +34,8 @@ const Header = () => {
     <Appbar.Header style={{ backgroundColor: "inherit", position: "relative", width: "100%" }}>
       <ProfileImageUpload setShowModal={setShowUpload} showModal={showUpload} />
       <UpdatePersonal setShowModal={setShowPersonalData} showModal={showPersonalData} />
-      <Pressable style={{ position: "absolute", left: -135, top: -16, width: "100%" }}>
-        <Image style={{ width: "100%", height: 120 }} resizeMode="contain" source={require('../../assets/logo_main.png')} alt="Home Logo" />
+      <Pressable style={{ position: "absolute", left: -170, top: -16, width: "100%" }}>
+        <Image style={{ width: "100%", height: 120 }} resizeMode="contain" source={require('../../assets/logo_white.png')} alt="Home Logo" />
       </Pressable>
       <View style={{ width: "80%", marginLeft: "24%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Searchbar

@@ -75,7 +75,6 @@ const Profile = ({ showModal, setShowModal }) => {
                 <Modal.Footer>
                     <SubmitButton width='30%' label='Update' />
                     <View style={{ width: "5%" }}>
-
                     </View>
                     <SubmitButton width='30' label='Cancel;' />
                 </Modal.Footer>
