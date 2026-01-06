@@ -22,7 +22,6 @@ const auth = (state = intialState, action) => {
             state.isAuthority = false
             state.token = undefined
             state.progress=1
-            console.log("logout")
             return state;
         case "forgot":
             const { forgot_email, isOtpVerified, isEmailValid } = action.payload;

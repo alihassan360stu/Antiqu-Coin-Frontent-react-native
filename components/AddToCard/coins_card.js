@@ -1,169 +1,237 @@
-import * as React from 'react';
-import { Text, View, FlatList, RefreshControl } from "react-native"
-import { SubmitButton } from '../../Common/Common_ui';
+import React, { useEffect, useState } from "react";
+import { View, FlatList, Image, Text, TouchableOpacity, ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import { VStack, HStack, Badge } from "native-base";
+import Axios from "axios";
+import baseUrl from "../../serveces/baseUrl";
+import apiPaths from "../../serveces/apiPaths";
+import CardDetails from "./specificDetails";
+import { useSelector } from "react-redux";
+import { useToast } from "native-base";
+import { toastMessage } from "../../Common/Common_ui";
 
-import MyCustomCard from './Card';
 
-let copper_array = [
-    {
-        year: "100 years old",
-        price: 150,
-        country: "Australian",
-        category: "copper",
-        description: "this is australlian old currency forthe local trade",
-        discount: 0,
-        quantity: 0,
-        delivery: 6,
-        is_availabe: 0,
-        filename: "copper21",
-    },
-    {
-        year: "55 years old",
-        price: 50,
-        country: "India",
-        category: "copper",
-        description: "this s indian old currency create by indian govt for the local trade",
-        discount: 0,
-        quantity: 10,
-        delivery: 6,
-        is_availabe: 1,
-        filename: "copper22",
-    },
-    {
-        year: "125 years old",
-        price: 800,
-        country: "England",
-        category: "copper",
-        description: "this is old pond coin belong to england for nlocal trade improvement",
-        discount: 0,
-        quantity: 10,
-        delivery: 6,
-        is_availabe: 1,
-        filename: "copper23",
-    },
-    {
-        year: "60 years old",
-        price: 150,
-        country: "south africa",
-        category: "copper",
-        description: "this is southafrica coin its theree currency for grow the business",
-        discount: 0,
-        quantity: 0,
-        delivery: 6,
-        is_availabe: 0,
-        filename: "copper24",
-    },
-    {
-        year: "250 years old",
-        price: 200,
-        country: "Iraq",
-        category: "copper",
-        description: "this is old iraqi coin belong king muzaafar ud din shah",
-        discount: 0,
-        quantity: 25,
-        delivery: 6,
-        is_availabe: 1,
-        filename: "copper25",
-    },
-    {
-        year: "500 years old",
-        price: 300,
-        country: "japan",
-        category: "copper",
-        description: "this is japan kung fu martial artist coin on dragon printed",
-        discount: 0,
-        quantity: 0,
-        delivery: 6,
-        is_availabe: 0,
-        filename: "copper26",
-    },
-    {
-        year: "250 years old",
-        price: 300,
-        country: "India",
-        category: "copper",
-        description: "this is indian old kashinath temple coin belong to the indian temple",
-        discount: 0,
-        quantity: 0,
-        delivery: 6,
-        is_availabe: 0,
-        filename: "copper27",
-    },
-    {
-        year: "200 years old",
-        price: 250,
-        country: "India",
-        category: "copper",
-        description: "this is mughal emperior coin belong to mughal family",
-        discount: 0,
-        quantity: 5,
-        delivery: 6,
-        is_availabe: 1,
-        filename: "copper28",
-    },
-    {
-        year: "108 years old",
-        price: 190,
-        country: "India",
-        category: "copper",
-        description: "this is indian old currency belong old people trade style this is now something new antiquecoin",
-        discount: 0,
-        quantity: 10,
-        delivery: 6,
-        is_availabe: 1,
-        filename: "copper29",
-    }
-]
-const Coins_card = ({ onChnageTab }) => {
-    return (
-        <FlatList
-            data={copper_array}
-            // ref={ref}
-            // onViewableItemsChanged={onViewableItemsChanged}
-            ListHeaderComponent={() => <View style={{ width: "100%", height: 100 , flexDirection:"row" , justifyContent:"center" , alignItems:"center" }}>
+const defaultCoinImage = require("../../assets/sample.png"); // add this image in assets folder
 
-                <Text style={{fontSize:30 , color:"white" , fontWeight:900}}>
-                    Your Favorite Items.
+const { width: screenWidth } = Dimensions.get("window");
+const numColumns = 2;
+const cardMargin = 10;
+const cardWidth = (screenWidth - cardMargin * (numColumns + 1)) / numColumns;
+
+const CoinsCard = () => {
+    const [coins, setCoins] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false)
+    const [selected, setSelected] = useState(null)
+    const [reload, setReload] = useState(false)
+    const search = useSelector(({ search }) => search.search);
+    const user = useSelector(({ auth }) => auth.user);
+    const toast = useToast();
+
+
+    useEffect(() => {
+        fetchCoins();
+    }, [search]);
+
+    useEffect(() => {
+        if (reload === true) {
+            fetchCoins()
+            setReload(false)
+        }
+    }, [reload])
+
+    const fetchCoins = async () => {
+        try {
+            const res = await Axios.get(`${baseUrl.api}${apiPaths.getItemsFromCart()}`, {
+                params: { userId: user?.id }
+            });
+            if (res.data.success) setCoins(res.data.data);
+            setLoading(false);
+        } catch (e) {
+            console.log("Error fetching coins:", e);
+            setLoading(false);
+        }
+    };
+
+    const handleRemove = async (item) => {
+        try {
+            const res = await Axios.delete(`${baseUrl.api}${apiPaths.deleteItemFromCart(item?.id)}`);
+            console.log("`${baseUrl.api}${apiPaths.deleteCoin(item?.id)}`",`${baseUrl.api}${apiPaths.deleteCoin(item?.id)}`)
+            if (res.data.success) {
+                toastMessage({ isClosable: true, toast: toast, title: "Created", message: "Coin added to cart successfully!", type: "success" })
+                setReload(true)
+            } else {
+                console.log("message: res.data.message ", res.data.message )
+                toastMessage({ isClosable: true, toast: toast, title: "Error", message: res.data.message || "Something went wrong please try again" })
+            }
+        } catch (error) {
+            console.log("Error adding to cart:", error);
+            toastMessage({ isClosable: true, toast: toast, title: "Error", message: "Something went wrong please try again" })
+        }
+    };
+
+
+    const handleBuyNow = (item) => {
+        console.log("Buy now:", item.coin_title);
+    };
+
+    const renderCoin = (data) => {
+        let item = data.item?.card || data.item
+        let file_path = item?.file_path
+        if (file_path) {
+            file_path = file_path.replace("uploads\\coins", "")
+        }
+        return <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => {
+                setSelected(item)
+                setShowModal(true)
+            }}
+            style={styles.card}
+        >
+            <View style={styles.imageContainer}>
+                <Image
+                    source={
+                        file_path
+                            ? { uri: `${baseUrl.api}/${file_path.replace(/\\/g, "/")}` }
+                            : defaultCoinImage
+                    }
+                    style={styles.image}
+                    resizeMode="contain"
+                />
+            </View>
+
+            {/* Coin Info */}
+            <VStack padding={8} space={1}>
+                <Text style={styles.coinTitle} numberOfLines={1}>
+                    {item.coin_title || "No Title"}
+                </Text>
+                <Text style={styles.countryText} numberOfLines={1}>
+                    Location: {item.country || "Unknown"}
+                </Text>
+                <Text style={styles.whySelling} numberOfLines={2}>
+                    Reason: {item.why_selling || "Not Provided"}
                 </Text>
 
-            </View>}
-            ListEmptyComponent={() => <View style={{ width: "100%", height: 400, alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ fontSize: 20, fontWeight: 500, color: "white", marginBottom: 20 }}>There Is No Items In This Cart</Text>
-                <SubmitButton
-                    backgroundColor="#3AA6B9"
-                    label='Add Items'
-                    onChange={() => { onChnageTab(1) }}
-                />
-            </View>}
-            // ItemSeparatorComponent={() => <View style={{ backgroundColor: "orange", height: 2 }}></View>}
-            ListFooterComponent={() => <View style={{ height: 40, width: "100%", alignItems: "center", marginTop: 10 }}>
-                <Text style={{ fontSize: 9, color: "white" }}>No More Items</Text>
-            </View>}
-            // getItemCount={() => Silver_array.length}
-            // getItem={(data, index) => Silver_array[index]}
-            renderItem={({ item }) => <MyCustomCard item={item} />
-            }
-            // initialNumToRender={5}
-            // initialScrollIndex={8}
-            keyExtractor={(item, index) => item.filename + index}
-        // horizontal={false}
-        // getItemLayout={(data, index) => {
-        //     return { length: 300, offset: 300 * index, index }
-        // }}
+                {/* Price & Quantity */}
+                <HStack space={2} marginTop={6} justifyContent="space-between">
+                    <Badge colorScheme="green" variant="subtle" rounded="full" _text={{ fontSize: 10 }}>
+                        ${item.expected_rates?.toLocaleString() || 0}
+                    </Badge>
+                    <Badge colorScheme="orange" variant="subtle" rounded="full" _text={{ fontSize: 10 }}>
+                        Qty: {item.quantity || 0}
+                    </Badge>
+                </HStack>
 
+                <HStack space={2} marginTop={8}>
+                    <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleRemove(data.item)}>
+                        <Text style={styles.btnText}>Remove</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buyNowBtn} onPress={() => handleBuyNow(item)}>
+                        <Text style={styles.btnText}>Buy Now</Text>
+                    </TouchableOpacity>
+                </HStack>
+            </VStack>
 
-        // refreshControl={
-        //     <RefreshControl
+            {showModal === true && <CardDetails showModal={showModal} setShowModal={setShowModal} item={selected} setReload={setReload} />}
+        </TouchableOpacity>
+    }
 
-        //         progressViewOffset={30}
-        //     // refreshing={refreshing}
-        //     // onRefresh={()=>{console.log("sdfsfsdgfdfc")}}
-        //     />
-        // }
-        >
+    if (loading) {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size="large" color="#3AA6B9" />
+            </View>
+        );
+    }
 
-        </FlatList>
+    return (
+        <View>
+            <View style={{ width: "100%", display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 2 }}>
+                <Text
+                    style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        color: "#333",
+                        marginVertical: 8,
+                    }}
+                >
+                    Total items: {coins?.length}
+                </Text>
+            </View>
+            <FlatList
+                data={coins}
+                keyExtractor={(item) => item?.card_id?.toString()}
+                renderItem={renderCoin}
+                numColumns={numColumns}
+                contentContainerStyle={{ padding: cardMargin }}
+                showsVerticalScrollIndicator={false}
+            />
+        </View>
     );
-}
+};
 
-export default Coins_card;
+const styles = StyleSheet.create({
+    card: {
+        width: cardWidth,
+        margin: cardMargin / 2,
+        borderRadius: 14,
+        backgroundColor: "#fff",
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 4,
+        overflow: "hidden",
+    },
+    imageContainer: {
+        width: "100%",
+        height: cardWidth * 0.7,
+        backgroundColor: "#f0f0f0",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    image: {
+        width: "80%",
+        height: "80%",
+    },
+    coinTitle: {
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#222",
+    },
+    countryText: {
+        fontSize: 12,
+        color: "#555",
+    },
+    whySelling: {
+        fontSize: 11,
+        color: "#777",
+    },
+    addToCartBtn: {
+        flex: 1,
+        backgroundColor: "#FFA500",
+        paddingVertical: 6,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buyNowBtn: {
+        flex: 1,
+        backgroundColor: "#3AA6B9",
+        paddingVertical: 6,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    btnText: {
+        color: "#fff",
+        fontWeight: "600",
+        fontSize: 10,
+    },
+    loading: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});
+
+export default CoinsCard;

@@ -1,443 +1,289 @@
-import { SubmitButton, InputField, TextAreaCustom } from "../../Common/Common_ui";
-import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
-import ImagePicker from 'react-native-image-crop-picker';
-import Icon3 from 'react-native-vector-icons/Octicons';
-import Icon4 from 'react-native-vector-icons/Entypo';
-import Icon5 from 'react-native-vector-icons/MaterialIcons';
-import Icon6 from 'react-native-vector-icons/Ionicons';
-import Icon7 from 'react-native-vector-icons/Fontisto';
 import React from "react";
+import { ScrollView, View, Text, StyleSheet, Pressable, Dimensions, Alert, Image } from "react-native";
+import ImagePicker from "react-native-image-crop-picker";
+import axios from "axios";
+import Icon3 from "react-native-vector-icons/Octicons";
+import Icon4 from "react-native-vector-icons/Entypo";
+import Icon5 from "react-native-vector-icons/MaterialIcons";
+import Icon6 from "react-native-vector-icons/Ionicons";
+import { SubmitButton, InputField } from "../../Common/Common_ui";
+import baseUrl from "../../serveces/baseUrl";
+import apiPaths from "../../serveces/apiPaths";
+import { requestCameraPermission, requestGalleryPermission } from "../../utiles/permission";
+import { toastMessage } from "../../Common/Common_ui";
+import { useToast } from "native-base";
+import { useSelector } from 'react-redux';
+
+
+
 
 const initialState = {
-    name: "",
-    email: "",
-    contact: "",
-    cnic: "",
-    r_name: "",
-    r_cnic: "",
-    r_email: "",
-    r_contact: "",
-    coin_title: "",
-    quantity: "",
-    expected_rates: "",
-    why_selling: "",
-    contry: "",
-    code: "",
-    address: "",
-    actual_address: "",
-}
-
+    name: "", email: "", contact: "", cnic: "",
+    coin_title: "", quantity:1, expected_rates: 600, why_selling: "",
+    country: "",  address: "",
+    file: null,
+};
 
 const Index = () => {
-    const [state, setState] = React.useState(initialState)
-    const [errorState, setErrorState] = React.useState(initialState)
+    const user = useSelector(({ auth }) => auth.user)
+    const [state, setState] = React.useState({ ...initialState, name: user?.name || "", email: user?.email || "", user_id: user?.id || -1 });
+    const [errorState, setErrorState] = React.useState({ general: "" });
+    const [loading, setLoading] = React.useState(false);
+    const [successMessage, setSuccessMessage] = React.useState("");
+    const toast = useToast();
+
+
+
     const onChange = (name, value) => {
-        setErrorState(initialState)
-        setState({ ...state, [name]: value })
-    }
-    const pick = async () => {
-        try {
-            ImagePicker.openPicker({
-                width: 300,
-                height: 400,
-                cropping: true
-            }).then(async image => {
+        setState({ ...state, [name]: value });
+        setErrorState({ general: "" }); // reset general error on change
+    };
 
-                console.log("file name ?" , image.filename)
-                console.log("file name ?" , image.mime)
-
-            }).catch((e) => {
-                console.log(e)
-            })
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const validation = () => {
-
-        if (state.coin_title.trim().length < 1) {
-            setErrorState({ ...errorState, coin_title: "coin_title required please fill it." });
-            return false
-        }
-        if (state.quantity.trim().length < 1) {
-            setErrorState({ ...errorState, quantity: "quantity required please fill it." });
-            return false
-        }
-        if (state.expected_rates.trim().length < 1) {
-            setErrorState({ ...errorState, expected_rates: "expected_rates required please fill it." });
-            return false
-        }
-        if (state.why_selling.trim().length < 1) {
-            setErrorState({ ...errorState, why_selling: "why_selling required please fill it." });
-            return false
-        }
-
-        if (state.name.trim().length < 1) {
-            setErrorState({ ...errorState, name: "name required please fill it." });
-            return false
-        }
-        if (state.email.trim().length < 1) {
-            setErrorState({ ...errorState, email: "email required please fill it." });
-            return false
-        }
-        if (state.contact.trim().length < 1) {
-            setErrorState({ ...errorState, contact: "contact required please fill it." });
-            return false
-        }
-        if (state.cnic.trim().length < 1) {
-            setErrorState({ ...errorState, cnic: "cnic required please fill it." });
-            return false
-        }
-
-
-        if (state.r_name.trim().length < 1) {
-            setErrorState({ ...errorState, r_name: "relative name required please fill it." });
-            return false
-        }
-        if (state.r_email.trim().length < 1) {
-            setErrorState({ ...errorState, r_email: "relative email required please fill it." });
-            return false
-        }
-        if (state.r_contact.trim().length < 1) {
-            setErrorState({ ...errorState, r_contact: "relative contact required please fill it." });
-            return false
-        }
-        if (state.r_cnic.trim().length < 1) {
-            setErrorState({ ...errorState, r_cnic: "relative cnic required please fill it." });
-            return false
-        }
-
-        if (state.contry.trim().length < 1) {
-            setErrorState({ ...errorState, contry: "contry required please fill it." });
-            return false
-        }
-
-        if (state.code.trim().length < 1) {
-            setErrorState({ ...errorState, code: "code required please fill it." });
-            return false
-        }
-        if (state.address.trim().length < 1) {
-            setErrorState({ ...errorState, address: "address required please fill it." });
-            return false
-        }
-        if (state.actual_address.trim().length < 1) {
-            setErrorState({ ...errorState, actual_address: "actual_address required please fill it." });
-            return false
-        }
-        return true
-    }
+    // Camera
     const openCamera = async () => {
+        const hasPermission = await requestCameraPermission();
+        if (!hasPermission) return;
+
         try {
-            await ImagePicker.openCamera({
-                width: 300,
-                height: 400,
-                cropping: true,
-            }).then(async image => {
-                // console.log(image);
-
-            }).catch((e) => {
-                console.log(e)
-            })
+            const img = await ImagePicker.openCamera({ width: 400, height: 400, cropping: true });
+            setState({ ...state, file: img });
+            setErrorState({ general: "" });
         } catch (e) {
-            console.log(e)
+            if (e.code !== "E_PICKER_CANCELLED") console.log("Camera Error:", e);
         }
-    }
+    };
 
-    const submit = () => {
-        if (validation()) {
-            try {
+    // Gallery
+    const pickImage = async () => {
+        const hasPermission = await requestGalleryPermission();
+        if (!hasPermission) return;
 
-            } catch (e) {
+        try {
+            const img = await ImagePicker.openPicker({ width: 400, height: 400, cropping: true });
+            setState({ ...state, file: img });
+            setErrorState({ general: "" });
+        } catch (e) {
+            if (e.code !== "E_PICKER_CANCELLED") console.log("Gallery Error:", e);
+        }
+    };
 
-                console.log("error", e)
+    // Form Validation (show only first error)
+    const validateForm = () => {
+        const errors = [];
+
+        // if (!state.name.trim()) errors.push("Name is required");
+        // else if (!state.email.trim() || !/^\S+@\S+\.\S+$/.test(state.email)) errors.push("Valid email is required");
+        // else if (!state.contact.trim()) errors.push("Contact is required");
+        // else if (!state.cnic.trim() || !/^\d{5}-\d{7}-\d{1}$/.test(state.cnic)) errors.push("CNIC must be 12345-1234567-1");
+        // else if (!state.coin_title.trim()) errors.push("Coin title is required");
+        // else if (!state.quantity || isNaN(state.quantity)) errors.push("Quantity must be a number");
+        // else if (!state.expected_rates || isNaN(state.expected_rates)) errors.push("Expected rates must be a number");
+        // else if (!state.why_selling.trim()) errors.push("Reason is required");
+        // else if (!state.country.trim()) errors.push("Country is required");
+        // else if (!state.address.trim()) errors.push("Address is required");
+        // File optional, so not validated
+
+        if (errors.length > 0) {
+            setErrorState({ general: errors[0] });
+            return false;
+        } else {
+            setErrorState({ general: "" });
+            return true;
+        }
+    };
+
+    // Submit Form
+    const submitForm = async () => {
+        if (!validateForm()) return;
+
+        setLoading(true);
+        setSuccessMessage("");
+
+        try {
+            const formData = new FormData();
+
+            Object.keys(state).forEach((key) => {
+                if (key !== "file") formData.append(key, state[key]);
+            });
+
+                console.log("useruser", state);
+
+            if (state.file) {
+                formData.append("file", {
+                    uri: state.file?.path.startsWith("file://") ? state.file.path : `file://${state.file?.path}`,
+                    type: state.file?.mime || "image/jpeg",
+                    name: state.file?.filename || `coin-${Date.now()}.jpg`,
+                });
             }
-        }
-    }
 
+            const { data } = await axios.post(`${baseUrl.api}${apiPaths.createCoins()}`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+
+            if (data.success) {
+                toastMessage({ isClosable: true, toast: toast, title: "Created", message: "Coin request submitted successfully!", type: "success" })
+                setState(initialState);
+            } else {
+                toastMessage({ isClosable: true, toast: toast, title: "Error", message: data.message || "Submission failed" })
+            }
+        } catch (error) {
+            toastMessage({ isClosable: true, toast: toast, title: "Error", message: "something went wrong please try again" })
+            console.log("Axios Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <ScrollView style={style.container}>
-            <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10, marginTop: 20 }}>
-                Coins Details
-            </Text>
-            <View style={style.ViewStyle}>
-                <View style={style.directionRow}>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 50 }}>
+            {errorState.general ? <Text style={styles.error}>{errorState.general}</Text> : null}
+            {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
+
+            {/* Coins Section */}
+            <Text style={styles.sectionTitle}>Coins Details</Text>
+            <View style={styles.sectionCard}>
+                <View style={styles.row}>
                     <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        onChangeText={(e) => { onChange("coin_title", e) }}
+                        width="48%"
                         label="Title"
-                        placeholder="Title..."
-                        leftIcon={<Icon5 name="title" size={20} />}
+                        placeholder="Coin Title"
                         value={state.coin_title}
-                        inValid={errorState.coin_title !== ""}
-                        errorMessage={errorState.coin_title}
+                        onChangeText={(e) => onChange("coin_title", e)}
+                        leftIcon={<Icon5 name="title" size={20} />}
                     />
                     <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
+                        width="48%"
                         label="Quantity"
-                        onChangeText={(e) => { onChange("quantity", e) }}
-                        type="number"
                         placeholder="100"
+                        value={state.quantity?.toString()}
+                        onChangeText={(e) => onChange("quantity", e)}
                         leftIcon={<Icon6 name="warning-sharp" size={20} />}
-                        value={state.quantity}
-                        inValid={errorState.quantity !== ""}
-                        errorMessage={errorState.quantity}
                     />
                 </View>
-                <View style={style.directionRow}>
+                <View style={styles.row}>
                     <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        onChangeText={(e) => { onChange("expected_rates", e) }}
+                        width="48%"
                         label="Expected Rates"
-                        placeholder="500$"
-                        leftIcon={<Icon5 name="price-check" size={15} />}
-                        value={state.expected_rates}
-                        inValid={errorState.expected_rates !== ""}
-                        errorMessage={errorState.expected_rates}
+                        placeholder="$500"
+                        value={state.expected_rates?.toString()}
+                        onChangeText={(e) => onChange("expected_rates", e)}
+                        leftIcon={<Icon5 name="price-check" size={20} />}
                     />
                     <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
+                        width="48%"
                         label="Why Selling"
-                        onChangeText={(e) => { onChange("why_selling", e) }}
-                        placeholder="i have to much"
-                        leftIcon={<Icon5 name="question-mark" size={15} />}
+                        placeholder="Reason"
                         value={state.why_selling}
-                        inValid={errorState.why_selling !== ""}
-                        errorMessage={errorState.why_selling}
+                        onChangeText={(e) => onChange("why_selling", e)}
+                        leftIcon={<Icon5 name="question-mark" size={20} />}
                     />
                 </View>
-                <View style={{ marginTop: 20, paddingLeft: 5 }}>
-                    <Text >
-                        Upload Coin Pictue
-                    </Text>
-                    <View style={{ padding: 5, justifyContent: "center", flexDirection: "row", width: "45%", borderRadius: 5, marginTop: 2 }}>
-                        <Pressable onPress={openCamera}>
-                            <Icon4 name="camera" size={30} />
-                        </Pressable>
-                        <View style={{ width: 30 }} ></View>
-                        <Pressable onPress={pick}>
-                            <Icon3 name="upload" size={30} />
-                        </Pressable>
-                    </View>
+
+                {/* Upload Section */}
+                <Text style={styles.uploadLabel}>Upload Coin Picture (optional)</Text>
+                <View style={styles.uploadRow}>
+                    <Pressable onPress={openCamera} style={styles.uploadBtn}>
+                        <Icon4 name="camera" size={30} color="#3AA6B9" />
+                        <Text style={styles.uploadText}>Camera</Text>
+                    </Pressable>
+                    <Pressable onPress={pickImage} style={styles.uploadBtn}>
+                        <Icon3 name="upload" size={30} color="#3AA6B9" />
+                        <Text style={styles.uploadText}>Gallery</Text>
+                    </Pressable>
+
+                    {state.file && (
+                        <View style={styles.imagePreviewContainer}>
+                            <Image source={{ uri: state.file.path }} style={styles.imagePreview} resizeMode="cover" />
+                        </View>
+                    )}
                 </View>
             </View>
 
-            <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10, marginTop: 20 }}>
-                Personal Info
-            </Text>
-            <View style={style.ViewStyle}>
-
-                <View style={style.directionRow}>
+            {/* Personal Info */}
+            <Text style={styles.sectionTitle}>Personal Info</Text>
+            <View style={styles.sectionCard}>
+                <View style={styles.row}>
                     <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        onChangeText={(e) => { onChange("name", e) }}
-                        label="Name"
-                        placeholder="name..."
-                        leftIcon={<Icon5 name="title" size={15} />}
-                        value={state.name}
-                        inValid={errorState.name !== ""}
-                        errorMessage={errorState.name}
-                    />
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        onChangeText={(e) => { onChange("email", e) }}
-                        fontWeight={500}
-                        label="Email"
-                        type="text"
-                        placeholder="ali.hassan@gmail.com"
-                        leftIcon={<Icon7 name="email" size={15} />}
-                        value={state.email}
-                        inValid={errorState.email !== ""}
-                        errorMessage={errorState.email}
-                    />
-                </View>
-                <View style={style.directionRow}>
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Contact"
-                        placeholder="021-x-x-x-x"
-                        onChangeText={(e) => { onChange("contact", e) }}
-                        value={state.contact}
-                        leftIcon={<Icon5 name="numbers" size={15} />}
-                        inValid={errorState.contact !== ""}
-                        errorMessage={errorState.contact}
-                    />
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        value={state.cnic}
-                        onChangeText={(e) => { onChange("cnic", e) }}
-                        label="CNIC"
-                        placeholder="14101-x-x-x-x"
-                        leftIcon={<Icon5 name="numbers" size={15} />}
-                        inValid={errorState.cnic !== ""}
-                        errorMessage={errorState.cnic}
-                    />
-                </View>
-            </View>
-            <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10, marginTop: 20 }}>
-                Any Relative Details
-            </Text>
-
-            <View style={style.ViewStyle}>
-                <View style={style.directionRow}>
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Name"
-                        onChangeText={(e) => { onChange("r_name", e) }}
-                        placeholder="name..."
-                        leftIcon={<Icon5 name="title" size={15} />}
-                        value={state.r_name}
-                        inValid={errorState.r_name !== ""}
-                        errorMessage={errorState.r_name}
-                    />
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Email"
-                        type="text"
-                        placeholder="ali.hassan@gmail.com"
-                        leftIcon={<Icon7 name="email" size={15} />}
-                        value={state.r_email}
-                        onChangeText={(e) => { onChange("r_email", e) }}
-                        inValid={errorState.r_email !== ""}
-                        errorMessage={errorState.r_email}
-                    />
-                </View>
-                <View style={style.directionRow}>
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Contact"
-                        placeholder="021-x-x-x-x"
-                        leftIcon={<Icon5 name="numbers" size={15} />}
-                        value={state.r_contact}
-                        onChangeText={(e) => { onChange("r_contact", e) }}
-                        inValid={errorState.r_contact !== ""}
-                        errorMessage={errorState.r_contact}
-                    />
-                    <InputField
-                        width="45%"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="CNIC"
-                        placeholder="14101-x-x-x-x"
-                        value={state.r_cnic}
-                        onChangeText={(e) => { onChange("r_cnic", e) }}
-                        leftIcon={<Icon5 name="numbers" size={15} />}
-                        inValid={errorState.r_cnic !== ""}
-                        errorMessage={errorState.r_cnic}
-                    />
-                </View>
-            </View>
-
-            <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10, marginTop: 20 }}>
-                Address Details
-            </Text>
-            <View style={style.ViewStyle}>
-                <View style={style.directionRow}>
-                    <InputField
-                        width="45%"
-                        backgroundColor="white"
-                        fontSize={15}
-                        fontWeight={500}
+                        width="48%"
                         label="Country"
-                        onChangeText={(e) => { onChange("contry", e) }}
-                        placeholder="pakistan"
-                        leftIcon={<Icon5 name="title" size={15} />}
-                        value={state.contry}
-                        inValid={errorState.contry !== ""}
-                        errorMessage={errorState.contry}
+                        placeholder="Pakistan"
+                        value={state.country}
+                        onChangeText={(e) => onChange("country", e)}
+                        leftIcon={<Icon5 name="flag" size={20} />}
                     />
                     <InputField
-                        width="45%"
-                        backgroundColor="white"
-                        fontSize={15}
-                        fontWeight={500}
-                        value={state.code}
-                        label="Code"
-                        type="text"
-                        onChangeText={(e) => { onChange("code", e) }}
-                        placeholder="92"
-                        leftIcon={<Icon5 name="numbers" size={15} />}
-                        inValid={errorState.code !== ""}
-                        errorMessage={errorState.code}
+                        width="48%"
+                        label="Address"
+                        placeholder="City/Area"
+                        value={state.address}
+                        onChangeText={(e) => onChange("address", e)}
+                        leftIcon={<Icon4 name="address" size={20} />}
                     />
                 </View>
-                <View style={style.directionRow}>
+                <View style={styles.row}>
                     <InputField
-                        width="45%"
-                        backgroundColor="white"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Address"
-                        placeholder="kpk/hangu"
-                        value={state.address}
-                        onChangeText={(e) => { onChange("address", e) }}
-                        leftIcon={<Icon4 name="address" size={15} />}
-                        inValid={errorState.address !== ""}
-                        errorMessage={errorState.address}
+                        width="48%"
+                        label="Contact"
+                        placeholder="03XXXXXXXXX"
+                        value={state.contact}
+                        onChangeText={(e) => onChange("contact", e)}
+                        leftIcon={<Icon5 name="phone" size={20} />}
                     />
                     <InputField
-                        width="45%"
-                        backgroundColor="white"
-                        fontSize={15}
-                        fontWeight={500}
-                        label="Actual Address"
-                        placeholder="gulshan/iqbal/block/10"
-                        leftIcon={<Icon4 name="address" size={15} />}
-                        value={state.actual_address}
-                        onChangeText={(e) => { onChange("actual_address", e) }}
-                        inValid={errorState.actual_address !== ""}
-                        errorMessage={errorState.actual_address}
+                        width="48%"
+                        label="CNIC"
+                        placeholder="12345-1234567-1"
+                        value={state.cnic}
+                        onChangeText={(e) => onChange("cnic", e)}
+                        leftIcon={<Icon5 name="badge" size={20} />}
                     />
                 </View>
             </View>
-            <View style={{ marginBottom: 20, marginTop: 20 }}>
-                <SubmitButton onChange={submit} label="Submit" backgroundColor="#3AA6B9" width="100%" />
+            <View style={{ marginVertical: 20 }}>
+                <SubmitButton
+                    onChange={submitForm}
+                    label={loading ? "Loading ..." : "Submit"}
+                    disabled={loading}
+                    backgroundColor="#3AA6B9"
+                    width="100%"
+                />
             </View>
         </ScrollView>
-    )
+    );
+};
 
-}
-const style = StyleSheet.create({
-    container: {
-        width: "100%",
-        padding: 10,
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#F2F2F2", padding: 10 },
+    sectionTitle: { fontSize: 18, fontWeight: "700", marginBottom: 10, marginTop: 20, color: "#333" },
+    sectionCard: {
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 15,
+        marginBottom: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
-    ViewStyle: {
-        width: "100%",
-        backgroundColor: "#F9F9F9",
-        padding: 10,
-        paddingBottom: 20,
-        borderRadius: 10
+    row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
+    uploadLabel: { fontSize: 14, fontWeight: "600", marginTop: 10 },
+    uploadRow: { flexDirection: "row", justifyContent: "flex-start", marginTop: 5, alignItems: "center" },
+    uploadBtn: { flexDirection: "column", justifyContent: "center", alignItems: "center", marginRight: 20 },
+    uploadText: { fontSize: 12, color: "#3AA6B9", marginTop: 5 },
+    imagePreviewContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 10,
+        overflow: "hidden",
+        marginLeft: 15,
+        borderWidth: 1,
+        borderColor: "#ddd",
     },
-    directionRow: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexDirection: "row",
-        marginTop: 10
-    }
-})
+    imagePreview: { width: "100%", height: "100%" },
+    error: { color: "red", fontWeight: "600", marginBottom: 5 },
+    success: { color: "green", fontWeight: "600", marginBottom: 10 },
+});
 
 export default Index;

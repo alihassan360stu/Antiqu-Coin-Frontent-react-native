@@ -1,535 +1,228 @@
-import * as React from 'react';
-import { useCallback, useState, useRef } from "react"
-import { Avatar, Button, Card, Title, Paragraph, } from 'react-native-paper';
-import Icon3 from 'react-native-vector-icons/FontAwesome';
-import { Box, VStack, Divider, Text } from "native-base"
-import { Image, View, FlatList, RefreshControl } from "react-native"
-import baseUrl from '../../serveces/baseUrl';
+import React, { useEffect, useState } from "react";
+import { View, FlatList, Image, Text, TouchableOpacity, ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import { VStack, HStack, Badge } from "native-base";
+import Axios from "axios";
+import baseUrl from "../../serveces/baseUrl";
+import apiPaths from "../../serveces/apiPaths";
+import CardDetails from "./specificDetails";
+import { useSelector } from "react-redux";
+import { useToast } from "native-base";
+import { toastMessage } from "../../Common/Common_ui";
 
-import MyCustomCard from './Card';
 
-let copper_array =[
-    {
-        year:"500 years old",
-        price:450,
-        country:"England",
-        category:"copper",
-        description:"this is copper antique coin belong to england this is britain currency",
-        discount:0,
-        quantity:4,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper1.jpg",
-    },
-    {
-        year:"400 years old",
-        price:600,
-        country:"Japan",
-        category:"copper",
-        description:"This is cpper antique coin belong to japan gifty martial artist student",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper2.jpg",
-    },
-    {
-        year:"400 years old",
-        price:438,
-        country:"America",
-        category:"copper",
-        description:"this is american dollar its too much old coin belong to america using people for the local trade",
-        discount:0,
-        quantity:2,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper3.jpg",
-    },
-    {
-        year:"350 years old",
-        price:780,
-        country:"Belgium",
-        category:"copper",
-        description:"this coin is belong from belgium this locally trade coin during people and govt",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper4.jpg",
-    },
-    {
-        year:"600 years old",
-        price:420,
-        country:"Indian",
-        category:"copper",
-        description:"this is indian tradition coin usign to gift this coin to thier guest in india",
-        discount:0,
-        quantity:20,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper5.jpg",
-    },
-    {
-        year:"200 years old",
-        price:800,
-        country:"Australia",
-        category:"copper",
-        description:"this is george 6 australian antique coin create by the king george of australia",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper6.jpg",
-    },
-    {
-        year:"250 years old",
-        price:600,
-        country:"Indian",
-        category:"copper",
-        description:"this is indian antique coin belong mughal family this is islamic tradition coin by mughal empire",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper7.jpg",
-    },
-    {
-        year:"70 years old",
-        price:120,
-        country:"Pakistan",
-        category:"copper",
-        description:"this is pakistan one pesa create by pakistan govt for the local trade now this is just an antique",
-        discount:0,
-        quantity:250,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper8.jpg",
-    },
-    {
-        year:"100 years old",
-        price:150,
-        country:"India",
-        category:"copper",
-        description:"this is indian state karnatak govt coin belong to karnatak",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper9.jpg",
-    },
-    {
-        year:"150 years old",
-        price:350,
-        country:"South Africa",
-        category:"copper",
-        description:"this south africa antique old coin using in forest for the local trade",
-        discount:0,
-        quantity:20,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper10.jpg",
-    },
-    {
-        year:"200 years old",
-        price:350,
-        country:"America",
-        category:"copper",
-        description:"this is american 1 cent cretae by american govt for the local trade nut now this is just an antique",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper11.jpg",
-    },
-    {
-        year:"250 years old",
-        price:550,
-        country:"china",
-        category:"copper",
-        description:"this is coin is belong to china this dragon printed antique coin",
-        discount:0,
-        quantity:2,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper12.png",
-    },
-    {
-        year:"105 years old",
-        price:900,
-        country:"australia",
-        category:"copper",
-        description:"this is australian cureency belong to australia create for local trades in australia ",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper13.png",
-    },
-    {
-        year:"300 years old",
-        price:220,
-        country:"brazil",
-        category:"copper",
-        description:"this is brazil currency created y thier govt for the growth of local trades but now this is just antique",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper14.png",
-    },
-    {
-        year:"100 years old",
-        price:190,
-        country:"china",
-        category:"copper",
-        description:"this is china antique coin belong to the china this is just fpr trade purpose",
-        discount:0,
-        quantity:3,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper15.jpg",
-    },
-    {
-        year:"150 years old",
-        price:650,
-        country:"taiwan",
-        category:"copper",
-        description:"this is taiwan dragon symbolic coin using to gifting purpose",
-        discount:0,
-        quantity:5,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper16.jpg",
-    },
-    {
-        year:"120 years old",
-        price:500,
-        country:"India",
-        category:"copper",
-        description:"this is traditions coin belong indian gods temple",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper17.png",
-    },
-    {
-        year:"75 years old",
-        price:250,
-        country:"china",
-        category:"copper",
-        description:"this is china currenyc mau zeding was the founder of china this show the love and spirit",
-        discount:0,
-        quantity:50,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper18.png",
-    },
-    {
-        year:"100 years old",
-        price:200,
-        country:"Iran",
-        category:"copper",
-        description:"this is old iran currency create by there govt for the local trade",
-        discount:0,
-        quantity:5,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper19.png",
-    },
-    {
-        year:"150 years old",
-        price:250,
-        country:"portugal",
-        category:"copper",
-        description:"this portugal local currency using for the trade",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper20.png",
-    },
-    {
-        year:"100 years old",
-        price:150,
-        country:"Australian",
-        category:"copper",
-        description:"this is australlian old currency forthe local trade",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper21.png",
-    },
-    {
-        year:"55 years old",
-        price:50,
-        country:"India",
-        category:"copper",
-        description:"this s indian old currency create by indian govt for the local trade",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper22.png",
-    },
-    {
-        year:"125 years old",
-        price:800,
-        country:"England",
-        category:"copper",
-        description:"this is old pond coin belong to england for nlocal trade improvement",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper23.png",
-    },
-    {
-        year:"60 years old",
-        price:150,
-        country:"south africa",
-        category:"copper",
-        description:"this is southafrica coin its theree currency for grow the business",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper24.png",
-    },
-    {
-        year:"250 years old",
-        price:200,
-        country:"Iraq",
-        category:"copper",
-        description:"this is old iraqi coin belong king muzaafar ud din shah",
-        discount:0,
-        quantity:25,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper25.png",
-    },
-    {
-        year:"500 years old",
-        price:300,
-        country:"japan",
-        category:"copper",
-        description:"this is japan kung fu martial artist coin on dragon printed",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper26.png",
-    },
-    {
-        year:"250 years old",
-        price:300,
-        country:"India",
-        category:"copper",
-        description:"this is indian old kashinath temple coin belong to the indian temple",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper27.png",
-    },
-    {
-        year:"200 years old",
-        price:250,
-        country:"India",
-        category:"copper",
-        description:"this is mughal emperior coin belong to mughal family",
-        discount:0,
-        quantity:5,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper28.png",
-    },
-    {
-        year:"108 years old",
-        price:190,
-        country:"India",
-        category:"copper",
-        description:"this is indian old currency belong old people trade style this is now something new antiquecoin",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"copper29.png",
-    },
-    {
-        year:"700 years old",
-        price:900,
-        country:"american",
-        category:"copper",
-        description:"this is ship antique coin using this is by pirate of sea",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"copper30.jpg",
-    },
-]
+// Default coin image (put your local asset here)
+const defaultCoinImage = require("../../assets/sample.png"); // add this image in assets folder
 
-let style_array=[
-    {
-        year:"150 years old",
-        price:850,
-        country:"american",
-        category:"style",
-        description:"this is style united state embosed antique coin using this is by american people for the local trade",
-        discount:0,
-        quantity:5,
-        delivery:6,
-        is_availabe:1,
-        filename:"style1.jpeg",
-    },
-    {
-        year:"85 years old",
-        price:250,
-        country:"Indian",
-        category:"style",
-        description:"this is style indian embosed antique coin using this is by indian people for the gift in temple",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"style2.jpeg",
-    },
-    {
-        year:"87 years old",
-        price:720,
-        country:"american",
-        category:"style",
-        description:"this is style united state embosed antique coin using this is used by american pirate",
-        discount:0,
-        quantity:10,
-        delivery:6,
-        is_availabe:1,
-        filename:"style3.jpeg",
-    },
-    {
-        year:"1 years old",
-        price:850,
-        country:"australia",
-        category:"style",
-        description:"this is style australian embosed antique coin using this is create just for antique coin purpose",
-        discount:0,
-        quantity:30,
-        delivery:6,
-        is_availabe:1,
-        filename:"style4.jpeg",
-    },
-    {
-        year:"100 years old",
-        price:250,
-        country:"france",
-        category:"style",
-        description:"this is style france embosed antique coin using this is used by people for the local trade",
-        discount:0,
-        quantity:50,
-        delivery:6,
-        is_availabe:1,
-        filename:"style5.jpeg",
-    },
-    {
-        year:"200 years old",
-        price:250,
-        country:"portugal",
-        category:"style",
-        description:"this is style portugal embosed antique coin using this by pirate",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:0,
-        filename:"style6.jpeg",
-    },
-    {
-        year:"2500 years old",
-        price:200,
-        country:"portugal",
-        category:"style",
-        description:"this is style portugal embosed antique coin using this iby the pirate of sea",
-        discount:0,
-        quantity:5,
-        delivery:6,
-        is_availabe:1,
-        filename:"style7.jpeg",
-    },
-    {
-        year:"120 years old",
-        price:260,
-        country:"american",
-        category:"style",
-        description:"this is style united state embosed antique coin using this is by american people for the antique selling",
-        discount:0,
-        quantity:50,
-        delivery:6,
-        is_availabe:1,
-        filename:"style8.jpeg",
-    },
-    {
-        year:"260 years old",
-        price:700,
-        country:"american",
-        category:"style",
-        description:"this is style united state embosed antique coin using this is by american people this is five cent coin now using just for antique",
-        discount:0,
-        quantity:50,
-        delivery:6,
-        is_availabe:1,
-        filename:"style9.jpeg",
-    },
-    {
-        year:"300 years old",
-        price:560,
-        country:"american",
-        category:"style",
-        description:"this is style united state embosed antique coin using this is by american sea pirate just like as a antique coin this used for dig in jungle",
-        discount:0,
-        quantity:0,
-        delivery:6,
-        is_availabe:10,
-        filename:"style10.jpeg",
-    },
-    ]
+const { width: screenWidth } = Dimensions.get("window");
+const numColumns = 2;
+const cardMargin = 10;
+const cardWidth = (screenWidth - cardMargin * (numColumns + 1)) / numColumns;
 
-const Coins_card = () => {
+const CoinsCard = () => {
+    const [coins, setCoins] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false)
+    const [selected, setSelected] = useState(null)
+    const [reload, setReload] = useState(false)
+    const search = useSelector(({ search }) => search.search);
+    const user = useSelector(({ auth }) => auth.user);
+    const toast = useToast();
+
+
+    useEffect(() => {
+        fetchCoins();
+    }, [search]);
+
+    useEffect(() => {
+        if (reload === true) {
+            fetchCoins()
+            setReload(false)
+        }
+    }, [reload])
+
+    const fetchCoins = async () => {
+        try {
+            const res = await Axios.get(`${baseUrl.api}${apiPaths.getCoins()}`, {
+                params: { search: search }
+            })
+            if (res.data.success) setCoins(res.data.data);
+            setLoading(false);
+        } catch (e) {
+            console.log("Error fetching coins:", e);
+            setLoading(false);
+        }
+    };
+
+    const handleAddToCart = async (item) => {
+        try {
+            const payload = {
+                userId: user?.id,
+                date: new Date(),
+                title: item.coin_title,
+                name: user?.name || "No Name",
+                card_id: item?.id
+            };
+            const res = await Axios.post(`${baseUrl.api}${apiPaths.addToCart()}`, payload);
+            if (res.data.success) {
+                toastMessage({ isClosable: true, toast: toast, title: "Created", message: "Coin added to cart successfully!", type: "success" })
+            } else {
+                toastMessage({ isClosable: true, toast: toast, title: "Error", message: res.data.message || "Something went wrong please try again" })
+            }
+        } catch (error) {
+            console.log("Error adding to cart:", error);
+            toastMessage({ isClosable: true, toast: toast, title: "Error", message: "Something went wrong please try again" })
+        }
+    };
+
+
+    const handleBuyNow = (item) => {
+        console.log("Buy now:", item.coin_title);
+    };
+
+    const renderCoin = ({ item }) => {
+        let file_path = item?.file_path
+        if (file_path) {
+            file_path = file_path.replace("uploads\\coins", "")
+        }
+        return <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => {
+                setSelected(item)
+                setShowModal(true)
+            }}
+            style={styles.card}
+        >
+            <View style={styles.imageContainer}>
+                <Image
+                    source={
+                        file_path
+                            ? { uri: `${baseUrl.api}/${file_path.replace(/\\/g, "/")}` }
+                            : defaultCoinImage
+                    }
+                    style={styles.image}
+                    resizeMode="contain"
+                />
+            </View>
+
+            {/* Coin Info */}
+            <VStack padding={8} space={1}>
+                <Text style={styles.coinTitle} numberOfLines={1}>
+                    {item.coin_title || "No Title"}
+                </Text>
+                <Text style={styles.countryText} numberOfLines={1}>
+                    Location: {item.country || "Unknown"}
+                </Text>
+                <Text style={styles.whySelling} numberOfLines={2}>
+                    Reason: {item.why_selling || "Not Provided"}
+                </Text>
+
+                {/* Price & Quantity */}
+                <HStack space={2} marginTop={6} justifyContent="space-between">
+                    <Badge colorScheme="green" variant="subtle" rounded="full" _text={{ fontSize: 10 }}>
+                        ${item.expected_rates?.toLocaleString() || 0}
+                    </Badge>
+                    <Badge colorScheme="orange" variant="subtle" rounded="full" _text={{ fontSize: 10 }}>
+                        Qty: {item.quantity || 0}
+                    </Badge>
+                </HStack>
+
+                {/* Buttons */}
+                <HStack space={2} marginTop={8}>
+                    <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleAddToCart(item)}>
+                        <Text style={styles.btnText}>Add Cart</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buyNowBtn} onPress={() => handleBuyNow(item)}>
+                        <Text style={styles.btnText}>Buy Now</Text>
+                    </TouchableOpacity>
+                </HStack>
+            </VStack>
+
+            {showModal === true && <CardDetails showModal={showModal} setShowModal={setShowModal} item={selected} setReload={setReload} />}
+        </TouchableOpacity>
+    }
+
+    if (loading) {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size="large" color="#3AA6B9" />
+            </View>
+        );
+    }
+
     return (
-            <FlatList
-                data={copper_array.concat(style_array)}
-                // ref={ref}
-                // onViewableItemsChanged={onViewableItemsChanged}
-                // ListHeaderComponent={() => <View><Text>loading no data available</Text></View>}
-                // ListEmptyComponent={() => <View><Text>loading no data available</Text></View>}
-                // ItemSeparatorComponent={() => <View style={{ backgroundColor: "orange", height: 2 }}></View>}
-                // ListFooterComponent={() => <View style={{ height: 40, width: "100%" }}><Text>"this is the fotter of list"</Text></View>}
-                // getItemCount={() => Silver_array.length}
-                // getItem={(data, index) => Silver_array[index]}
-                renderItem={({ item }) => <MyCustomCard item={item} />
-                }
-                // initialNumToRender={5}
-                // initialScrollIndex={8}
-                keyExtractor={(item, index) => item.filename+ index}
-                numColumns={2}
-            // horizontal={false}
-            // getItemLayout={(data, index) => {
-            //     return { length: 300, offset: 300 * index, index }
-            // }}
-
-
-            // refreshControl={
-            //     <RefreshControl
-
-            //         progressViewOffset={30}
-            //     // refreshing={refreshing}
-            //     // onRefresh={()=>{console.log("sdfsfsdgfdfc")}}
-            //     />
-            // }
-            >
-
-            </FlatList>
+        <FlatList
+            data={coins}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderCoin}
+            numColumns={numColumns}
+            contentContainerStyle={{ padding: cardMargin }}
+            showsVerticalScrollIndicator={false}
+        />
     );
-}
+};
 
-export default Coins_card;
+const styles = StyleSheet.create({
+    card: {
+        width: cardWidth,
+        margin: cardMargin / 2,
+        borderRadius: 14,
+        backgroundColor: "#fff",
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 4,
+        overflow: "hidden",
+    },
+    imageContainer: {
+        width: "100%",
+        height: cardWidth * 0.7,
+        backgroundColor: "#f0f0f0",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    image: {
+        width: "80%",
+        height: "80%",
+    },
+    coinTitle: {
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#222",
+    },
+    countryText: {
+        fontSize: 12,
+        color: "#555",
+    },
+    whySelling: {
+        fontSize: 11,
+        color: "#777",
+    },
+    addToCartBtn: {
+        flex: 1,
+        backgroundColor: "#FFA500",
+        paddingVertical: 6,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buyNowBtn: {
+        flex: 1,
+        backgroundColor: "#3AA6B9",
+        paddingVertical: 6,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    btnText: {
+        color: "#fff",
+        fontWeight: "600",
+        fontSize: 10,
+    },
+    loading: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});
+
+export default CoinsCard;

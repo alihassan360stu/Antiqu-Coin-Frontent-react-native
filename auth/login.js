@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAvoidingView } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sign_in } from "../redux/action/auth";
+import baseUrl from "../serveces/baseUrl";
 let errorState = {
   email: "",
   password: ""
@@ -152,12 +153,12 @@ const Login = ({ setIsAuth }) => {
             I'm a new user.
           </Text>
           <TouchableWrapper
-          label="sign up"
-          onChange={() => { navigation.navigate("register") }}
-          color="#ed9121"
-          fontSize={15}
-          fontWeight={800}
-          width="17%"
+            label="sign up"
+            onChange={() => { navigation.navigate("register") }}
+            color="#ed9121"
+            fontSize={15}
+            fontWeight={800}
+            width="17%"
           />
         </HStack>
       </Center>

@@ -96,15 +96,13 @@ const Register = () => {
       try {
         data = await apiCalled(user)
 
-        console.log("data ", data)
-
         if (!data.status) {
           toastMessage({ isClosable: true, toast: toast, title: "Error", message: data.message })
         }
         else {
-          setPopup(true)
           // dispatch(userRegister(data)) //
           toastMessage({ isClosable: true, toast: toast, title: "Created", message: data.message, type: "success" })
+          navigation.navigate("login")
           // toastMessage("success", "Register Successfull!", "We Have Send You Verification Otp To Your Email.Otp Will Be Expire After 3 Minutes")
         }
       } catch (e) {
@@ -190,7 +188,7 @@ const Register = () => {
           placeholder="please re-enter password"
           onChangeText={(e) => { setConfirm(e) }}
         />
-        <Box display="flex" flexDirection="row" justifyContent="space-between">
+        {/* <Box display="flex" flexDirection="row" justifyContent="space-between">
           <TouchableWrapper
             label="verify account"
             onChange={() => { navigation.navigate("verify") }}
@@ -207,7 +205,7 @@ const Register = () => {
             fontWeight={400}
             width="48%"
           />
-        </Box>
+        </Box> */}
       </VStack>
 
       <Center mt="8" w="100%">

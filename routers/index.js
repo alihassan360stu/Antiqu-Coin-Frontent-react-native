@@ -2,7 +2,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import AuthRoutes from "./authRouters"
 import { useEffect, useState } from "react";
 import InitialLoad from "./initialLoad"
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector, useDispatch } from 'react-redux';
 import { initialLoadProgress, sign_in } from "../redux/action/auth"
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,7 +14,7 @@ const optionHeader = (title, nav) => {
     return <LinearGradient
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
         style={{ height: 50, display: "flex", flexDirection: "row", alignItems: "center", paddingLeft: 10 }}
-        colors={['#FFB534', '#FFB534', '#FFB534']} // Customize with your gradient colors
+        colors={['#FFB534', '#FFB534', '#FFB534']} 
     >
         {title !== "Login" && <TouchableHighlight
             activeOpacity={0.9}
@@ -30,11 +29,9 @@ const optionHeader = (title, nav) => {
 
 const Routes = () => {
     const dispatch = useDispatch()
-    const Stack = createNativeStackNavigator();
     const [isAuthority, setIsAuthority] = useState(false)
     const prograss = useSelector(({ auth }) => auth.progress)
 
-    console.log(isAuthority);
     const isValid = useSelector(({ auth }) => auth.isAuthority)
     const checlIsUserLogin = async () => {
         try {
@@ -71,15 +68,7 @@ const Routes = () => {
     return (
         <>
             {
-                prograss < 100 ? <NavigationContainer>
-                    <Stack.Navigator
-                        screenOptions={optionHeader("Loading please wait ... ")}
-                        initialRouteName="loading">
-                        <Stack.Screen name="loading" >
-                            {(props) => <InitialLoad {...props} setProgress={prograss} />}
-                        </Stack.Screen>
-                    </Stack.Navigator>
-                </NavigationContainer> :
+                prograss < 100 ? <InitialLoad  setProgress={prograss} /> :
 
                     !isAuthority ?
                         <NavigationContainer>
